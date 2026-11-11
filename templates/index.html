@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxWise AI - Intelligent Tax Saving Guide for Beginners</title>
+    <meta name="description" content="AI-powered Indian Income Tax guidance platform combining RAG, Rule-Based Tax Calculation, Personalized Recommendations, and Explainable AI.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeMobileNav()"></div>
+    <aside class="sidebar" id="app-sidebar" aria-label="TaxWise AI navigation">
+        <button type="button" class="sidebar-brand" onclick="navigateTo('landing')" aria-label="TaxWise AI home">
+            <span class="sidebar-brand-icon">
+                <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </span>
+            <span class="sidebar-brand-text"><strong>TaxWise <i>AI</i></strong><small>Tax guidance, made clear</small></span>
+        </button>
+
+        <span class="sidebar-section-label">WORKSPACE</span>
+        <nav class="nav-links" id="main-nav" aria-label="Main navigation">
+            <button type="button" class="nav-link active" data-view="landing" onclick="navigateTo('landing')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>Home</span></button>
+            <button type="button" class="nav-link" data-view="dashboard" onclick="navigateTo('dashboard')"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="11" width="7" height="10" rx="1.5"/><rect x="3" y="14" width="8" height="7" rx="1.5"/></svg><span>Dashboard</span></button>
+            <button type="button" class="nav-link" data-view="calculator" onclick="navigateTo('calculator')"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="2"/><path d="M8 6h8M8 11h2m4 0h2M8 15h2m4 0h2M8 18.5h2m4 0h2"/></svg><span>Tax Calculator</span></button>
+            <button type="button" class="nav-link" data-view="comparison" onclick="navigateTo('comparison')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5m0 14h16M8 15l3-4 3 2 5-7"/><path d="M16 6h3v3"/></svg><span>Tax Comparison</span></button>
+            <button type="button" class="nav-link" data-view="chat" onclick="navigateTo('chat')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.6 8.6 0 0 1-3.5-.7L4 20l1.5-3.8A7.2 7.2 0 0 1 4 11.5 7.5 7.5 0 0 1 12 4a7.5 7.5 0 0 1 8 7.5Z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></svg><span>AI Assistant</span></button>
+            <button type="button" class="nav-link" data-view="opportunities" onclick="navigateTo('opportunities')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 14.5 9.5 21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z"/><path d="m19 3 .7 2.3L22 6l-2.3.7L19 9l-.7-2.3L16 6l2.3-.7z"/></svg><span>Opportunities</span></button>
+            <button type="button" class="nav-link" data-view="education" onclick="navigateTo('education')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5A2.5 2.5 0 0 1 5.5 3H20v17H5.5A2.5 2.5 0 0 1 3 17.5z"/><path d="M3 17.5A2.5 2.5 0 0 1 5.5 15H20M8 7h8m-8 4h7"/></svg><span>Learn Taxes</span></button>
+            <button type="button" class="nav-link" data-view="documents" onclick="navigateTo('documents')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2.5h8l4 4V21H6z"/><path d="M14 2.5V7h4M9 12h6m-6 4h6"/></svg><span>Document Guide</span></button>
+            <button type="button" class="nav-link" data-view="profile" onclick="navigateTo('profile')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4m0-12.8L17 7M7 17l-1.4 1.4"/><circle cx="12" cy="12" r="4"/></svg><span>Settings</span></button>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <button type="button" class="sidebar-admin-link" onclick="navigateTo('admin')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 6v5c0 5-3.4 8.2-8 10-4.6-1.8-8-5-8-10V6z"/><path d="m9 12 2 2 4-4"/></svg><span>Admin area</span><span class="sidebar-admin-arrow">↗</span></button>
+            <div class="sidebar-account-label">ACCOUNT</div>
+            <div id="auth-buttons-container" class="sidebar-auth-actions">
+                <button type="button" class="btn btn-outline btn-sm" onclick="openModal('login-modal')">Login</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="openModal('register-modal')">Sign Up</button>
+            </div>
+            <div id="user-profile-badge" class="sidebar-user-actions hidden">
+                <button type="button" class="user-chip" onclick="navigateTo('profile')"><span class="user-avatar" id="nav-user-initial">U</span><span class="user-name" id="nav-user-name">User</span></button>
+                <button type="button" class="btn-icon" onclick="logoutUser()" title="Logout" aria-label="Logout"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
+            </div>
+        </div>
+    </aside>
+
+    <header class="topbar">
+        <div class="topbar-leading">
+            <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open navigation" aria-controls="app-sidebar" aria-expanded="false" onclick="toggleMobileNav()"><span></span><span></span><span></span></button>
+            <span class="topbar-context">Tax planning workspace</span>
+        </div>
+        <div class="fy-badge topbar-fy">
+            <span class="fy-label">FINANCIAL YEAR</span>
+            <select id="global-fy-select" onchange="onFinancialYearChange(this.value)">
+                <option value="FY 2025-26" selected>FY 2025-26 (AY 2026-27)</option>
+                <option value="FY 2024-25">FY 2024-25 (AY 2025-26)</option>
+            </select>
+        </div>
+    </header>
+
+    <!-- Main Views Container -->
+    <main class="main-content">
+
+        <!-- ========================================================= -->
+        <!-- VIEW 1: LANDING PAGE (Module 1) -->
+        <!-- ========================================================= -->
+        <section id="view-landing" class="app-view active">
+            <div class="hero-container">
+                <div class="hero-copy">
+                    <div class="hero-badge">
+                        <span class="hero-badge-dot"></span>
+                        <span>AI-POWERED TAX INTELLIGENCE</span>
+                    </div>
+                    <h1 class="hero-title">
+                        Take Control of Your Taxes.<br>
+                        <span>Make Smarter Financial Decisions.</span>
+                    </h1>
+                    <p class="hero-description">
+                        Understand Indian income tax, calculate your tax liability, discover potential tax-saving opportunities, and get personalized AI guidance, all in one place.
+                    </p>
+                    <div class="hero-actions">
+                        <button type="button" class="btn btn-primary btn-lg" onclick="navigateTo('calculator')">
+                            Calculate My Tax
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-lg" onclick="navigateTo('chat')">
+                            Explore AI Assistant
+                        </button>
+                    </div>
+                    <div class="hero-proof-list" aria-label="Product qualities">
+                        <span><i></i>Beginner friendly</span>
+                        <span><i></i>AI-powered guidance</span>
+                        <span><i></i>Transparent calculations</span>
+                    </div>
+                </div>
+                <div class="hero-preview" aria-label="Illustrative tax dashboard preview">
+                    <div class="preview-topbar">
+                        <div><span class="preview-window-dot"></span><span class="preview-window-dot"></span><span class="preview-window-dot"></span></div>
+                        <span>YOUR TAX OVERVIEW</span>
+                        <span class="preview-year">FY 2025-26</span>
+                    </div>
+                    <div class="preview-intro">
+                        <div><span class="preview-eyebrow">ILLUSTRATIVE EXAMPLE</span><h2>A clearer view of your tax</h2></div>
+                        <span class="preview-status">Estimate</span>
+                    </div>
+                    <div class="preview-metrics">
+                        <div class="preview-metric preview-income"><span>Annual income</span><strong>₹12,00,000</strong><small>Example profile</small></div>
+                        <div class="preview-metric preview-tax"><span>Estimated tax</span><strong>₹0</strong><small>Illustrative only</small></div>
+                        <div class="preview-metric preview-opportunity"><span>Opportunities</span><strong>3 to review</strong><small>Based on sample inputs</small></div>
+                    </div>
+                    <div class="preview-analysis">
+                        <div class="preview-regimes">
+                            <div class="preview-panel-heading"><strong>Regime comparison</strong><span>Sample</span></div>
+                            <div class="regime-line"><span>New regime</span><div><i class="line-new"></i></div><b>₹0</b></div>
+                            <div class="regime-line"><span>Old regime</span><div><i class="line-old"></i></div><b>₹84k</b></div>
+                            <p>Illustrative figures, not a tax quote.</p>
+                        </div>
+                        <div class="preview-chart-panel">
+                            <div class="preview-panel-heading"><strong>Income breakdown</strong><span>Example</span></div>
+                            <div class="preview-chart"><span>₹12L</span></div>
+                            <div class="preview-chart-legend"><i></i>Take-home <i></i>Tax estimate</div>
+                        </div>
+                    </div>
+                    <div class="preview-ai-note">
+                        <span class="preview-ai-icon">AI</span>
+                        <div><strong>One opportunity to review</strong><p>Check whether your reported investments qualify under the selected regime.</p></div>
+                        <span class="preview-ai-arrow">↗</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="capability-strip" aria-label="TaxWise capabilities">
+                <span>Built for clearer tax decisions</span>
+                <strong>Smart tax calculation</strong>
+                <strong>Personalized recommendations</strong>
+                <strong>Source-linked tax guidance</strong>
+                <strong>Beginner-friendly explanations</strong>
+            </div>
+
+            <!-- Product features -->
+            <div class="pillars-section" id="features">
+                <div class="section-title-wrap">
+                    <span class="section-kicker">A MORE CONFIDENT WAY TO PLAN</span>
+                    <h2>Clarity across your tax journey</h2>
+                    <p>Practical tools and clear explanations, built around your financial details.</p>
+                </div>
+                <div class="pillars-grid">
+                    <div class="pillar-card">
+                        <div class="pillar-icon pillar-icon-blue">01</div>
+                        <h3>Smart Tax Calculator</h3>
+                        <p>Estimate income tax with a deterministic, financial-year-aware calculation engine.</p>
+                    </div>
+                    <div class="pillar-card">
+                        <div class="pillar-icon pillar-icon-cyan">02</div>
+                        <h3>Regime Comparison</h3>
+                        <p>Compare estimated scenarios using the same profile and see what drives the difference.</p>
+                    </div>
+                    <div class="pillar-card">
+                        <div class="pillar-icon pillar-icon-amber">03</div>
+                        <h3>AI Tax Assistant</h3>
+                        <p>Ask tax questions naturally and get beginner-friendly responses with retrieved references.</p>
+                    </div>
+                    <div class="pillar-card">
+                        <div class="pillar-icon pillar-icon-green">04</div>
+                        <h3>Tax-Saving Opportunities</h3>
+                        <p>Review potential deductions with eligibility status, conditions, and missing details.</p>
+                    </div>
+                    <div class="pillar-card">
+                        <div class="pillar-icon pillar-icon-navy">05</div>
+                        <h3>Explainable Guidance</h3>
+                        <p>See which profile inputs and tax rules led to each recommendation.</p>
+                    </div>
+                    <div class="pillar-card">
+                        <div class="pillar-icon pillar-icon-red">06</div>
+                        <h3>Tax Learning Center</h3>
+                        <p>Learn common tax terms and documents in plain language, at your own pace.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features & How It Works -->
+            <div class="features-section" id="how-it-works">
+                <div class="section-title-wrap">
+                    <span class="section-kicker">FOUR SIMPLE STEPS</span>
+                    <h2>From questions to clearer choices</h2>
+                    <p>Move from your financial details to an estimate you can understand.</p>
+                </div>
+                <div class="workflow-steps">
+                    <div class="step-card">
+                        <div class="step-number">01</div>
+                        <h4>Create Your Profile</h4>
+                        <p>Set your age, employment type, residency, and preferred financial year.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">02</div>
+                        <h4>Enter Financial Details</h4>
+                        <p>Add income, investments, insurance, and relevant loan information at your pace.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">03</div>
+                        <h4>Analyze Your Tax</h4>
+                        <p>Review a deterministic estimate and compare tax scenarios for the selected year.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">04</div>
+                        <h4>Discover Opportunities</h4>
+                        <p>Explore relevant options, why they appeared, and which details still need checking.</p>
+                    </div>
+                </div>
+            </div>
+
+            <section class="assistant-showcase" aria-labelledby="assistant-showcase-title">
+                <div class="assistant-showcase-copy">
+                    <span class="section-kicker">TAXWISE AI ASSISTANT</span>
+                    <h2 id="assistant-showcase-title">Ask in your own words.<br>Understand the answer.</h2>
+                    <p>Explore tax questions in beginner mode. Responses use retrieved knowledge and show their source details.</p>
+                    <button type="button" class="btn btn-primary" onclick="navigateTo('chat')">Explore AI Assistant <span aria-hidden="true">↗</span></button>
+                </div>
+                <div class="assistant-showcase-window">
+                    <div class="showcase-window-top"><span class="showcase-avatar">AI</span><div><strong>TaxWise AI Assistant</strong><small><span></span> Beginner mode</small></div><span class="showcase-more">···</span></div>
+                    <div class="showcase-conversation">
+                        <div class="showcase-question">I earn ₹8 lakh annually. Can you explain my tax options?</div>
+                        <div class="showcase-answer"><strong>Here’s a simple starting point</strong><p>Your estimate depends on your financial year, regime, and eligible deductions. Enter your details in the calculator to compare scenarios.</p><div class="showcase-source"><span>REFERENCE PREVIEW</span><strong>Tax sources appear with each answer</strong><small>Year · section · source location</small></div></div>
+                    </div>
+                    <div class="showcase-input"><span>Ask a tax question...</span><span class="showcase-send">↑</span></div>
+                    <p class="showcase-caption">Illustrative conversation preview</p>
+                </div>
+            </section>
+
+            <!-- Security & Privacy Section -->
+            <div class="trust-section">
+                <div class="trust-grid">
+                    <div class="trust-item">
+                        <div class="trust-icon">🔒</div>
+                        <h4>Privacy First & Secure</h4>
+                        <p>Sensitive financial inputs remain private and are securely hashed. We never expose your financial data.</p>
+                    </div>
+                    <div class="trust-item">
+                        <div class="trust-icon">🛡️</div>
+                        <h4>Anti-Hallucination Design</h4>
+                        <p>If our knowledge base does not contain verified information on a niche topic, the assistant declines to fabricate rules.</p>
+                    </div>
+                    <div class="trust-item">
+                        <div class="trust-icon">📄</div>
+                        <h4>Versioned Tax Rules</h4>
+                        <p>Tax laws evolve every union budget. All calculation slabs and rules are strictly versioned by Financial Year.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statutory Disclaimer Banner -->
+            <div class="disclaimer-banner">
+                <strong>Important Notice:</strong>
+                <p>TaxWise AI provides educational information and estimates based on the information available in its knowledge base. Tax rules may change, and eligibility depends on individual circumstances. Always verify current rules using official sources or consult a qualified tax professional before filing or making financial decisions.</p>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 2: USER DASHBOARD (Module 6) -->
+        <!-- ========================================================= -->
+        <section id="view-dashboard" class="app-view">
+            <div class="view-header">
+                <div>
+                    <h2>Personalized Tax Dashboard</h2>
+                    <p class="subtitle">Comprehensive overview of your tax profile, active estimates, and optimization opportunities</p>
+                </div>
+                <div class="view-header-actions">
+                    <button type="button" class="btn btn-outline" onclick="navigateTo('calculator')">Edit Inputs</button>
+                    <button type="button" class="btn btn-primary" onclick="navigateTo('chat')">Ask Assistant</button>
+                </div>
+            </div>
+
+            <!-- Financial Summary Cards (Specification Section 6) -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-label">Annual Gross Income</span>
+                    <h3 class="metric-value" id="dash-gross-income">₹12,00,000</h3>
+                    <span class="metric-sub" id="dash-employment">Salaried Individual</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Estimated Deductions</span>
+                    <h3 class="metric-value text-accent" id="dash-total-deductions">₹75,000</h3>
+                    <span class="metric-sub" id="dash-deductions-sub">Standard deduction applied</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Taxable Net Income</span>
+                    <h3 class="metric-value" id="dash-taxable-income">₹11,25,000</h3>
+                    <span class="metric-sub">Subject to tax slabs</span>
+                </div>
+                <div class="metric-card highlighted">
+                    <span class="metric-label">Estimated Tax Payable</span>
+                    <h3 class="metric-value" id="dash-estimated-tax">₹0</h3>
+                    <span class="metric-sub text-success" id="dash-tax-sub">Zero Tax via Sec 87A Rebate!</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Effective Tax Rate</span>
+                    <h3 class="metric-value" id="dash-effective-rate">0.0%</h3>
+                    <span class="metric-sub" id="dash-regime-indicator">New Regime (FY 2025-26)</span>
+                </div>
+            </div>
+
+            <!-- Middle Row: Chart & Regime Snapshot -->
+            <div class="dashboard-row">
+                <div class="card chart-card">
+                    <div class="card-header">
+                        <h3>Income Allocation Breakdown</h3>
+                        <span class="badge badge-light">Take-Home vs Tax vs Deductions</span>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="dashboardDonutChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card regime-summary-card">
+                    <div class="card-header">
+                        <h3>Regime Decision Summary</h3>
+                        <span class="badge badge-success" id="dash-lower-regime-badge">New Regime Recommended</span>
+                    </div>
+                    <div class="regime-diff-box">
+                        <div class="diff-number" id="dash-diff-amount">₹0 Saved</div>
+                        <p id="dash-diff-summary">Both regimes produce zero tax for your current salary level.</p>
+                    </div>
+                    <div class="neutral-guidance-callout">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        <span id="dash-neutral-text">Based on the information provided, this scenario currently produces a lower estimated tax. Verify your eligibility and current rules before making a final decision.</span>
+                    </div>
+                    <div class="card-action">
+                        <button type="button" class="btn btn-outline btn-block" onclick="navigateTo('comparison')">View Slabs Breakdown</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Recommendations with Explainable AI -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h3>Personalized Recommendations & Opportunities</h3>
+                    <button type="button" class="btn-text" onclick="navigateTo('opportunities')">View All (6)</button>
+                </div>
+                <div id="dashboard-recs-container" class="recommendations-list">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 3: TAX CALCULATOR 8-STEP WIZARD (Module 7 & 22) -->
+        <!-- ========================================================= -->
+        <section id="view-calculator" class="app-view">
+            <div class="view-header">
+                <div>
+                    <h2>Step-by-Step Tax Calculator</h2>
+                    <p class="subtitle">Complete the 8-stage guided wizard to calculate your exact Indian income tax liability</p>
+                </div>
+                <button type="button" class="btn btn-outline" onclick="resetCalculatorForm()">Reset Form</button>
+            </div>
+
+            <!-- Wizard Progress Stepper (Specification Section 22) -->
+            <div class="wizard-stepper">
+                <div class="step-item active" id="step-nav-1" onclick="jumpToStep(1)">
+                    <span class="step-circle">1</span>
+                    <span class="step-title">Personal</span>
+                </div>
+                <div class="step-item" id="step-nav-2" onclick="jumpToStep(2)">
+                    <span class="step-circle">2</span>
+                    <span class="step-title">Income</span>
+                </div>
+                <div class="step-item" id="step-nav-3" onclick="jumpToStep(3)">
+                    <span class="step-circle">3</span>
+                    <span class="step-title">Investments</span>
+                </div>
+                <div class="step-item" id="step-nav-4" onclick="jumpToStep(4)">
+                    <span class="step-circle">4</span>
+                    <span class="step-title">Insurance</span>
+                </div>
+                <div class="step-item" id="step-nav-5" onclick="jumpToStep(5)">
+                    <span class="step-circle">5</span>
+                    <span class="step-title">Loans</span>
+                </div>
+                <div class="step-item" id="step-nav-6" onclick="jumpToStep(6)">
+                    <span class="step-circle">6</span>
+                    <span class="step-title">Other</span>
+                </div>
+                <div class="step-item" id="step-nav-7" onclick="jumpToStep(7)">
+                    <span class="step-circle">7</span>
+                    <span class="step-title">Calculation</span>
+                </div>
+                <div class="step-item" id="step-nav-8" onclick="jumpToStep(8)">
+                    <span class="step-circle">8</span>
+                    <span class="step-title">Advice</span>
+                </div>
+            </div>
+
+            <!-- Wizard Card Container -->
+            <div class="card wizard-card">
+                <form id="wizard-form" onsubmit="event.preventDefault(); nextStep();">
+
+                    <!-- STEP 1: Personal Information -->
+                    <div class="wizard-step-pane active" id="wizard-step-1">
+                        <div class="step-pane-header">
+                            <h3>Step 1: Personal Information</h3>
+                            <p>Tell us a bit about your tax profile to apply the correct statutory provisions.</p>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="wiz-age">Age (Years) <span class="tooltip-trigger" title="Senior citizens (60+) receive higher exemption limits in Old Regime.">ℹ️</span></label>
+                                <input type="number" id="wiz-age" value="28" min="18" max="100" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="wiz-employment">Employment Type</label>
+                                <select id="wiz-employment" onchange="onEmploymentChange(this.value)">
+                                    <option value="salaried" selected>Salaried Employee (Form 16)</option>
+                                    <option value="professional">Professional / Freelancer (Sec 44ADA)</option>
+                                    <option value="business">Business / Self-Employed</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="wiz-residence">Residential Status</label>
+                                <select id="wiz-residence">
+                                    <option value="resident" selected>Resident Individual (Eligible for 87A rebate)</option>
+                                    <option value="nri">Non-Resident Indian (NRI)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="wiz-regime">Preferred Tax Regime</label>
+                                <select id="wiz-regime" onchange="recalculateAll()">
+                                    <option value="new" selected>New Tax Regime (Section 115BAC - Default)</option>
+                                    <option value="old">Old Tax Regime (With itemized deductions)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: Income -->
+                    <div class="wizard-step-pane" id="wizard-step-2">
+                        <div class="step-pane-header">
+                            <h3>Step 2: Annual Income Sources</h3>
+                            <p>Report all income received during the financial year across different heads.</p>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <div class="label-row">
+                                    <label for="wiz-salary">Annual Gross Salary (₹)</label>
+                                    <button type="button" class="btn-tooltip" onclick="showExplainer('Gross Salary', 'Total compensation before standard deduction or EPF cuts.')">What is this?</button>
+                                </div>
+                                <div class="input-currency-wrap">
+                                    <span class="currency-tag">₹</span>
+                                    <input type="number" id="wiz-salary" value="1200000" min="0" step="10000" required>
+                                </div>
+                                <div class="quick-chips">
+                                    <button type="button" class="chip" onclick="setWizSalary(600000)">6L</button>
+                                    <button type="button" class="chip" onclick="setWizSalary(900000)">9L</button>
+                                    <button type="button" class="chip active" onclick="setWizSalary(1200000)">12L</button>
+                                    <button type="button" class="chip" onclick="setWizSalary(1500000)">15L</button>
+                                    <button type="button" class="chip" onclick="setWizSalary(2400000)">24L</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="wiz-business">Business / Professional Income (₹)</label>
+                                <div class="input-currency-wrap">
+                                    <span class="currency-tag">₹</span>
+                                    <input type="number" id="wiz-business" value="0" min="0" step="5000">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="wiz-interest">Bank Interest / FD Income (₹)</label>
+                                <div class="input-currency-wrap">
+                                    <span class="currency-tag">₹</span>
+                                    <input type="number" id="wiz-interest" value="0" min="0" step="1000">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="wiz-rental">Rental Income Received (₹)</label>
+                                <div class="input-currency-wrap">
+                                    <span class="currency-tag">₹</span>
+                                    <input type="number" id="wiz-rental" value="0" min="0" step="5000">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: Investments -->
+                    <div class="wizard-step-pane" id="wizard-step-3">
+                        <div class="step-pane-header">
+                            <h3>Step 3: Eligible Investments (Section 80C & NPS)</h3>
+                            <p>Applicable for deductions under the Old Tax Regime.</p>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <div class="label-row">
+                                    <label for="wiz-80c">Section 80C Deductions (Max ₹1.5 Lakhs)</label>
+                                    <button type="button" class="btn-tooltip" onclick="showExplainer('Section 80C', 'Includes EPF, PPF, ELSS, Life Insurance premiums, and children tuition fees.')">What is this?</button>
+                                </div>
+                                <div class="input-currency-wrap">
+                                    <span class="currency-tag">₹</span>
+                                    <input type="number" id="wiz-80c" value="150000" min="0" max="150000" step="5000">
+                                </div>
+                                <span class="field-help">EPF, PPF, ELSS, Life Insurance, NSC, 5-Yr Tax Saver FD</span>
+                            </div>
+                            <div class="form-group">
+                                <div class="label-row">
+                                    <label for="wiz-nps">Section 80CCD(1B) NPS Tier-1 (Max ₹50,000)</label>
+                                    <button type="button" class="btn-tooltip" onclick="showExplainer('NPS 80CCD(1B)', 'Exclusive extra ₹50,000 deduction over and above the ₹1.5L 80C limit.')">What is this?</button>
+                                </div>
+                                <div class="input-currency-wrap">
+                                    <span class="currency-tag">₹</span>
+                                    <input type="number" id="wiz-nps" value="50000" min="0" max="50000" step="5000">
+                                </div>
+                                <span class="field-help">Exclusive additional deduction above 80C (Old Regime)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4: Insurance -->
+                    <div class="wizard-step-pane" id="wizard-step-4">
+                        <div class="step-pane-header">
+                            <h3>Step 4: Health Insurance (Section 80D)</h3>
+                            <p>Claim deductions for health insurance premiums paid through banking channels.</p>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="wiz-80d">Health Insurance Premium - Self & Family (₹)</label>
+                                <div class="input-currency-wrap">
+                                    <span class="currency-tag">₹</span>
+                                    <input type="number" id="wiz-80d" value="25000" min="0" max="100000" step="1000">
+                                </div>
+                                <span class="field-help">Max ₹25,000 (increases to ₹50,000 if aged 60+)</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="wiz-parents-senior">Are your parents Senior Citizens (60+)?</label>
+                                <select id="wiz-parents-senior">
+                                    <option value="unknown">Unspecified (Needs more info)</option>
+                                    <option value="yes">Yes (Higher ₹50,000 ceiling applies)</option>
+                                    <option value="no">No (Standard ₹25,000 ceiling applies)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 5: Loans -->
+                    <div class="wizard-step-pane" id="wizard-step-5">
+                        <div class="step-pane-header">
+                            <h3>Step 5: Loans & Interest Deductions</h3>
+                            <p>Tax relief on home loans and higher education loans.</p>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <div class="label-row">
+                                    <label for="wiz-homeloan">Section 24(b) Home Loan Interest (₹)</label>
+                                    <button type="button" class="btn-tooltip" onclick="showExplainer('Home Loan 24(b)', 'Up to ₹2,00,000 interest deduction for self-occupied residential property.')">What is this?</button>
+                                </div>
+                                <div class="input-currency-wrap">
+                                    <span class="currency-tag">₹</span>
+                                    <input type="number" id="wiz-homeloan" value="0" min="0" max="200000" step="5000">
+                                </div>
+                                <span class="field-help">Max ₹2,00,000 per year for self-occupied home</span>
+                            </div>
+                            <div class="form-group">
+                                <div class="label-row">
+                                    <label for="wiz-eduloan">Section 80E Higher Education Loan Interest (₹)</label>
+                                    <button type="button" class="btn-tooltip" onclick="showExplainer('Section 80E', 'No upper ceiling! 100% of interest paid on higher education loans is deductible.')">What is this?</button>
+                                </div>
+                                <div class="input-currency-wrap">
+                                    <span class="currency-tag">₹</span>
+                                    <input type="number" id="wiz-eduloan" value="0" min="0" step="5000">
+                                </div>
+                                <span class="field-help">100% interest deductible with no monetary ceiling</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 6: Other Relevant Information -->
+                    <div class="wizard-step-pane" id="wizard-step-6">
+                        <div class="step-pane-header">
+                            <h3>Step 6: Other Relevant Information</h3>
+                            <p>HRA rental payments, charitable donations, and savings account interest.</p>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="wiz-hra">Annual Rent Paid for Residential Home (₹)</label>
+                                <div class="input-currency-wrap">
+                                    <span class="currency-tag">₹</span>
+                                    <input type="number" id="wiz-hra" value="0" min="0" step="5000">
+                                </div>
+                                <span class="field-help">For Section 10(13A) HRA exemption</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="wiz-donations">Section 80G Charitable Donations (₹)</label>
+                                <div class="input-currency-wrap">
+                                    <span class="currency-tag">₹</span>
+                                    <input type="number" id="wiz-donations" value="0" min="0" step="1000">
+                                </div>
+                                <span class="field-help">Must be non-cash (Form 10BE required)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 7: Tax Calculation Results -->
+                    <div class="wizard-step-pane" id="wizard-step-7">
+                        <div class="step-pane-header">
+                            <h3>Step 7: Deterministic Tax Calculation Results</h3>
+                            <p>Here is your slab-by-slab tax computation derived by our Rule-Based Engine.</p>
+                        </div>
+                        <div class="calc-results-container">
+                            <div class="results-cards-row">
+                                <div class="res-card">
+                                    <span>Gross Income</span>
+                                    <h4 id="calc-res-gross">₹12,00,000</h4>
+                                </div>
+                                <div class="res-card">
+                                    <span>Deductions</span>
+                                    <h4 id="calc-res-ded" class="text-accent">₹75,000</h4>
+                                </div>
+                                <div class="res-card">
+                                    <span>Taxable Income</span>
+                                    <h4 id="calc-res-taxable">₹11,25,000</h4>
+                                </div>
+                                <div class="res-card hero-res">
+                                    <span>Total Tax Payable</span>
+                                    <h4 id="calc-res-tax">₹0</h4>
+                                </div>
+                            </div>
+
+                            <div class="table-wrap">
+                                <h4>Slab-by-Slab Breakdown</h4>
+                                <table class="tax-table" id="calc-slabs-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Income Slab</th>
+                                            <th>Tax Rate</th>
+                                            <th>Taxable Amount</th>
+                                            <th>Tax Computed</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="calc-slabs-body">
+                                        <!-- Dynamically generated rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 8: Recommendations -->
+                    <div class="wizard-step-pane" id="wizard-step-8">
+                        <div class="step-pane-header">
+                            <h3>Step 8: Personalized Recommendations & Explainable AI</h3>
+                            <p>Actionable opportunities identified for your tax profile, ranked by financial relevance.</p>
+                        </div>
+                        <div id="wizard-recs-container" class="recommendations-list">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Wizard Navigation Buttons -->
+                    <div class="wizard-footer">
+                        <button type="button" class="btn btn-outline" id="wiz-prev-btn" onclick="prevStep()" disabled>Previous</button>
+                        <div class="wizard-footer-right">
+                            <span class="step-count-label" id="step-count-text">Step 1 of 8</span>
+                            <button type="button" class="btn btn-primary" id="wiz-next-btn" onclick="nextStep()">Next Step</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 4: TAX COMPARISON (Module 9) -->
+        <!-- ========================================================= -->
+        <section id="view-comparison" class="app-view">
+            <div class="view-header">
+                <div>
+                    <h2>Old vs New Tax Regime Comparison</h2>
+                    <p class="subtitle">Side-by-side analysis of your liability under both regimes with verified slab breakdowns</p>
+                </div>
+            </div>
+
+            <!-- Comparison Table Card (Specification Section 9) -->
+            <div class="card comparison-card">
+                <div class="comparison-summary-banner" id="comparison-banner">
+                    <div class="comp-badge" id="comp-badge">RECOMMENDED: NEW REGIME</div>
+                    <h3 id="comp-summary-title">You save ₹0 under the New Tax Regime</h3>
+                    <p id="comp-disclaimer-text">Based on the information provided, this scenario currently produces a lower estimated tax. Verify your eligibility and current rules before making a final decision.</p>
+                </div>
+
+                <div class="table-wrap">
+                    <table class="tax-table comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Scenario A: Old Tax Regime</th>
+                                <th>Scenario B: New Tax Regime (Default)</th>
+                                <th>Difference</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Gross Income</strong></td>
+                                <td id="comp-old-gross">₹12,00,000</td>
+                                <td id="comp-new-gross">₹12,00,000</td>
+                                <td>₹0</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Standard Deduction</strong></td>
+                                <td id="comp-old-std">₹50,000</td>
+                                <td id="comp-new-std">₹75,000</td>
+                                <td class="text-success">+₹25,000 in New</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Itemized Deductions</strong></td>
+                                <td id="comp-old-itemized">₹2,00,000</td>
+                                <td id="comp-new-itemized">₹0 (Not allowed)</td>
+                                <td>₹2,00,000 in Old</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Total Deductions</strong></td>
+                                <td id="comp-old-total-ded">₹2,50,000</td>
+                                <td id="comp-new-total-ded">₹75,000</td>
+                                <td>-</td>
+                            </tr>
+                            <tr class="highlight-row">
+                                <td><strong>Net Taxable Income</strong></td>
+                                <td id="comp-old-taxable">₹9,50,000</td>
+                                <td id="comp-new-taxable">₹11,25,000</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Base Tax Before Rebate</strong></td>
+                                <td id="comp-old-base-tax">₹1,02,500</td>
+                                <td id="comp-new-base-tax">₹52,500</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Section 87A Rebate</strong></td>
+                                <td id="comp-old-rebate">₹0</td>
+                                <td id="comp-new-rebate" class="text-success">₹52,500 (100% Rebate)</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Health & Education Cess (4%)</strong></td>
+                                <td id="comp-old-cess">₹4,100</td>
+                                <td id="comp-new-cess">₹0</td>
+                                <td>-</td>
+                            </tr>
+                            <tr class="total-tax-row">
+                                <td><strong>Estimated Final Tax</strong></td>
+                                <td id="comp-old-total-tax" class="text-danger">₹1,06,600</td>
+                                <td id="comp-new-total-tax" class="text-success">₹0</td>
+                                <td id="comp-diff-tax" class="text-success font-bold">₹1,06,600 Saved</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Effective Tax Rate</strong></td>
+                                <td id="comp-old-rate">8.88%</td>
+                                <td id="comp-new-rate">0.00%</td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 5: RAG-BASED AI ASSISTANT (Module 10, 13, 18) -->
+        <!-- ========================================================= -->
+        <section id="view-chat" class="app-view">
+            <div class="view-header">
+                <div>
+                    <h2>TaxWise AI Assistant</h2>
+                    <p class="subtitle">Ask any Indian income tax question in natural language. Answers are grounded in verified tax law.</p>
+                </div>
+                <div class="chat-controls">
+                    <!-- Beginner Mode Toggle (Specification Section 18) -->
+                    <div class="toggle-pill-group">
+                        <label for="chat-beginner-toggle">Explain Like I'm a Beginner</label>
+                        <input type="checkbox" id="chat-beginner-toggle" checked>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-layout">
+                <!-- Chat Window -->
+                <div class="card chat-window-card">
+                    <!-- Quick Prompt Chips -->
+                    <div class="chat-chips-bar">
+                        <button type="button" class="prompt-chip" onclick="askPreset('What is the difference between Old and New Tax Regime?')">Old vs New Regime</button>
+                        <button type="button" class="prompt-chip" onclick="askPreset('How can I save tax under Section 80C?')">80C Investments</button>
+                        <button type="button" class="prompt-chip" onclick="askPreset('How does Section 87A rebate give zero tax up to 12.75 Lakhs?')">Zero Tax under 87A</button>
+                        <button type="button" class="prompt-chip" onclick="askPreset('What health insurance deductions can I claim under Section 80D?')">80D Health Insurance</button>
+                        <button type="button" class="prompt-chip" onclick="askPreset('How do I claim HRA exemption without landlord PAN?')">HRA Rules</button>
+                        <button type="button" class="prompt-chip" onclick="askPreset('What is Form 16 and how do I read it?')">Understanding Form 16</button>
+                    </div>
+
+                    <!-- Messages Log -->
+                    <div class="chat-messages" id="chat-messages-container">
+                        <!-- Initial Welcome Message -->
+                        <div class="chat-msg ai-msg">
+                            <div class="msg-avatar">🤖</div>
+                            <div class="msg-content">
+                                <div class="msg-bubble">
+                                    <p>Hello! I am your <strong>TaxWise AI Assistant</strong>.</p>
+                                    <p>I help beginners understand Indian income tax rules, deductions (80C, 80D, HRA, NPS), tax slabs, and filing documents in simple, easy-to-understand language.</p>
+                                    <p>Ask me anything or click one of the suggested topics above to get started!</p>
+                                </div>
+                                <div class="msg-meta">
+                                    <span class="source-tag">Verified Indian Tax Knowledge Base (FY 2025-26)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input Bar -->
+                    <form class="chat-input-bar" onsubmit="event.preventDefault(); sendChatMessage();">
+                        <input type="text" id="chat-input" placeholder="Type your tax question here (e.g. 'I earn 8 Lakhs, what tax do I owe?')..." required autocomplete="off">
+                        <button type="submit" class="btn btn-primary" id="chat-send-btn">
+                            <span>Send</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 6: TAX-SAVING OPPORTUNITIES (Module 14 & 15) -->
+        <!-- ========================================================= -->
+        <section id="view-opportunities" class="app-view">
+            <div class="view-header">
+                <div>
+                    <h2>Tax-Saving Opportunities</h2>
+                    <p class="subtitle">Personalized tax optimization options categorized by eligibility and ranked by monetary impact</p>
+                </div>
+            </div>
+
+            <!-- Opportunities Filter Bar -->
+            <div class="filter-bar">
+                <button type="button" class="filter-chip active" onclick="filterOpportunities('all')">All Opportunities</button>
+                <button type="button" class="filter-chip" onclick="filterOpportunities('Eligible')">Eligible</button>
+                <button type="button" class="filter-chip" onclick="filterOpportunities('Potentially Eligible')">Potentially Eligible</button>
+                <button type="button" class="filter-chip" onclick="filterOpportunities('Requires Additional Information')">Needs More Info</button>
+                <button type="button" class="filter-chip" onclick="filterOpportunities('Not Applicable')">Not Applicable</button>
+            </div>
+
+            <div id="full-opportunities-list" class="opportunities-grid">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 7: TAX EDUCATION CENTER (Module 16) -->
+        <!-- ========================================================= -->
+        <section id="view-education" class="app-view">
+            <div class="view-header">
+                <div>
+                    <h2>Tax Education Center</h2>
+                    <p class="subtitle">Plain-English guides, terminology, and foundational concepts for beginners</p>
+                </div>
+            </div>
+
+            <!-- Education Search & Categories Bar -->
+            <div class="edu-search-bar">
+                <input type="text" id="edu-search-input" placeholder="Search tax topics (e.g. TDS, 80C, ITR, Slabs)..." oninput="filterEducationTopics(this.value)">
+                <div class="category-pills" id="edu-category-pills">
+                    <button type="button" class="category-pill active" onclick="filterEducationCategory('all')">All Topics</button>
+                    <button type="button" class="category-pill" onclick="filterEducationCategory('Basics')">Basics</button>
+                    <button type="button" class="category-pill" onclick="filterEducationCategory('Regimes')">Regimes</button>
+                    <button type="button" class="category-pill" onclick="filterEducationCategory('Filing')">Filing & ITR</button>
+                    <button type="button" class="category-pill" onclick="filterEducationCategory('Tips')">Common Mistakes</button>
+                </div>
+            </div>
+
+            <!-- Topic Cards Grid -->
+            <div class="edu-cards-grid" id="education-cards-container">
+                <!-- Dynamically populated from /api/education/topics -->
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 8: TAX DOCUMENT EXPLAINER (Module 17) -->
+        <!-- ========================================================= -->
+        <section id="view-documents" class="app-view">
+            <div class="view-header">
+                <div>
+                    <h2>Tax Section & Document Guide</h2>
+                    <p class="subtitle">Understand common deductions, eligibility conditions, supporting records, and tax documents in plain language.</p>
+                </div>
+            </div>
+
+            <div class="document-search-bar">
+                <label for="document-guide-search">Search sections and documents</label>
+                <input type="search" id="document-guide-search" placeholder="Try 80C, medical expenses, loan interest..." oninput="filterTaxDocuments(this.value)">
+            </div>
+
+            <section class="document-guide-group" aria-labelledby="tax-sections-heading">
+                <div class="document-group-heading">
+                    <div><h3 id="tax-sections-heading">Tax-saving sections</h3><p>Purpose, general eligibility, conditions, and records to check.</p></div>
+                    <span id="tax-section-count" class="badge badge-light">11 sections</span>
+                </div>
+                <div class="documents-grid" id="tax-section-cards-container" aria-live="polite"></div>
+            </section>
+
+            <section class="document-guide-group" aria-labelledby="tax-documents-heading">
+                <div class="document-group-heading">
+                    <div><h3 id="tax-documents-heading">Tax documents</h3><p>Common records used to understand or support your tax information.</p></div>
+                </div>
+                <div class="documents-grid" id="documents-cards-container" aria-live="polite">
+                <!-- Dynamically populated from /api/documents -->
+                </div>
+            </div>
+            </section>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 9: MY PROFILE (Module 5 & 7) -->
+        <!-- ========================================================= -->
+        <section id="view-profile" class="app-view">
+            <div class="view-header">
+                <div>
+                    <h2>Settings & Tax Profile</h2>
+                    <p class="subtitle">Manage your saved personal details, tax regime preference, financial year, and account security</p>
+                </div>
+            </div>
+
+            <div class="card profile-card">
+                <div id="profile-logged-out-msg" class="profile-auth-prompt">
+                    <h3>Sign In to Save Your Profile</h3>
+                    <p>Create a free account or log in to sync your tax profile across devices and retain your calculation history.</p>
+                    <div class="profile-auth-buttons">
+                        <button type="button" class="btn btn-primary" onclick="openModal('login-modal')">Sign In</button>
+                        <button type="button" class="btn btn-outline" onclick="openModal('register-modal')">Create Free Account</button>
+                    </div>
+                </div>
+
+                <div id="profile-form-container" class="hidden">
+                    <form id="profile-edit-form" onsubmit="event.preventDefault(); saveProfile();">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="prof-name">Full Name</label>
+                                <input type="text" id="prof-name" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="prof-email">Email Address</label>
+                                <input type="email" id="prof-email" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="prof-age">Age</label>
+                                <input type="number" id="prof-age" min="18" max="100" value="28">
+                            </div>
+                            <div class="form-group">
+                                <label for="prof-income">Annual Salary / Gross Income (₹)</label>
+                                <input type="number" id="prof-income" min="0" step="10000" value="1200000">
+                            </div>
+                            <div class="form-group">
+                                <label for="prof-regime">Default Regime</label>
+                                <select id="prof-regime">
+                                    <option value="new">New Tax Regime</option>
+                                    <option value="old">Old Tax Regime</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="prof-fy">Active Financial Year</label>
+                                <select id="prof-fy">
+                                    <option value="FY 2025-26">FY 2025-26 (AY 2026-27)</option>
+                                    <option value="FY 2024-25">FY 2024-25 (AY 2025-26)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="profile-actions">
+                            <button type="submit" class="btn btn-primary" id="save-profile-btn">Save Profile Changes</button>
+                            <span id="profile-status-msg" class="status-msg"></span>
+                        </div>
+                    </form>
+
+                    <form id="change-password-form" class="change-password-form" onsubmit="event.preventDefault(); changePassword();">
+                        <h3>Change Password</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="current-password">Current password</label>
+                                <input type="password" id="current-password" autocomplete="current-password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="new-password">New password (at least 12 characters)</label>
+                                <input type="password" id="new-password" minlength="12" autocomplete="new-password" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-outline">Update Password</button>
+                        <span id="password-status-msg" class="status-msg"></span>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 10: ADMIN PANEL (Module 34) -->
+        <!-- ========================================================= -->
+        <section id="view-admin" class="app-view">
+            <div class="view-header">
+                <div>
+                    <h2>Admin Dashboard & Rule Versioning</h2>
+                    <p class="subtitle">Monitor system telemetry, inspect knowledge base documents, and manage tax rule versions</p>
+                </div>
+            </div>
+
+            <div class="admin-auth-row">
+                <label for="admin-token">Admin access token</label>
+                <input type="password" id="admin-token" autocomplete="off">
+                <button type="button" class="btn btn-primary" onclick="loadAdminData()">Load admin data</button>
+                <span id="admin-status-msg" class="status-msg"></span>
+            </div>
+
+            <!-- Telemetry Stats Grid -->
+            <div class="admin-stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Registered Users</span>
+                    <h3 class="stat-value" id="admin-user-count">0</h3>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Tax Profiles Created</span>
+                    <h3 class="stat-value" id="admin-profile-count">0</h3>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Tax Rules Active</span>
+                    <h3 class="stat-value" id="admin-rules-count">12</h3>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">RAG Knowledge Docs</span>
+                    <h3 class="stat-value" id="admin-docs-count">12</h3>
+                </div>
+            </div>
+
+            <!-- Tax Rules Management Table -->
+            <div class="card admin-table-card">
+                <div class="card-header">
+                    <h3>Versioned Tax Rules</h3>
+                    <span class="badge badge-primary">Version Controlled</span>
+                </div>
+                <div class="table-wrap">
+                    <table class="tax-table">
+                        <thead>
+                            <tr>
+                                <th>Financial Year</th>
+                                <th>Rule Name</th>
+                                <th>Type</th>
+                                <th>Statutory Limit</th>
+                                <th>Source</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-rules-tbody">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-main">
+            <div class="footer-brand-block">
+                <div class="footer-brand-mark">₹</div>
+                <div><strong>TaxWise AI</strong><span>Understand your taxes. Decide with clarity.</span></div>
+            </div>
+            <div class="footer-links-group"><strong>About</strong><button onclick="navigateToSection('landing', '#view-landing')">About TaxWise AI</button><button onclick="navigateToSection('landing', '#features')">Features</button><button onclick="navigateToSection('landing', '#how-it-works')">How it works</button></div>
+            <div class="footer-links-group"><strong>Explore</strong><button onclick="navigateTo('calculator')">Tax calculator</button><button onclick="navigateTo('comparison')">Tax comparison</button><button onclick="navigateTo('opportunities')">Opportunities</button></div>
+            <div class="footer-links-group"><strong>Learn & help</strong><button onclick="navigateTo('education')">Tax education</button><button onclick="navigateTo('documents')">Document guide</button><button onclick="navigateTo('chat')">AI assistant</button></div>
+            <div class="footer-policy-group">
+                <details><summary>Privacy & security</summary><p>TaxWise AI stores saved profile data for your account. Do not enter PAN, Aadhaar, OTPs, or banking credentials.</p></details>
+                <details><summary>Terms & tax disclaimer</summary><p>Estimates and explanations are educational only. Confirm current rules and personal eligibility with official sources or a qualified tax professional.</p></details>
+            </div>
+        </div>
+        <div class="footer-legal">
+            <span>TaxWise AI provides educational information and estimates, not professional tax or legal advice.</span>
+            <span>Verify current rules using official sources before filing or making financial decisions.</span>
+            <span>© 2026 TaxWise AI · FY-specific estimates</span>
+        </div>
+    </footer>
+
+    <!-- Explainer Modal ("What Does This Mean?") -->
+    <div class="modal-backdrop" id="explainer-modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 id="explainer-title">Term Explanation</h3>
+                <button type="button" class="btn-close" onclick="closeModal('explainer-modal')">&times;</button>
+            </div>
+            <div class="modal-body" id="explainer-body">
+                <!-- Content injected here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="closeModal('explainer-modal')">Got it</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Explainable AI Modal ("Why am I seeing this?") -->
+    <div class="modal-backdrop" id="explainable-modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-header">
+                <div>
+                    <span class="modal-pretitle">EXPLAINABLE AI TRANSPARENCY</span>
+                    <h3 id="xai-title">Why am I seeing this?</h3>
+                </div>
+                <button type="button" class="btn-close" onclick="closeModal('explainable-modal')">&times;</button>
+            </div>
+            <div class="modal-body" id="xai-body">
+                <!-- Injected dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="closeModal('explainable-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal-backdrop" id="login-modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>Sign In to TaxWise AI</h3>
+                <button type="button" class="btn-close" onclick="closeModal('login-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="login-form" onsubmit="event.preventDefault(); submitLogin();">
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" required placeholder="you@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" required placeholder="••••••••">
+                    </div>
+                    <div class="form-error" id="login-error"></div>
+                    <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                </form>
+                <div class="modal-switch-text">
+                    Don't have an account? <a href="#" onclick="switchModal('login-modal', 'register-modal')">Sign up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal-backdrop" id="register-modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>Create TaxWise AI Account</h3>
+                <button type="button" class="btn-close" onclick="closeModal('register-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="register-form" onsubmit="event.preventDefault(); submitRegister();">
+                    <div class="form-group">
+                        <label for="reg-name">Full Name</label>
+                        <input type="text" id="reg-name" required placeholder="Aarav Sharma">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-email">Email Address</label>
+                        <input type="email" id="reg-email" required placeholder="aarav@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password">Password (min 12 characters)</label>
+                        <input type="password" id="reg-password" required minlength="12" placeholder="At least 12 characters">
+                    </div>
+                    <div class="form-error" id="reg-error"></div>
+                    <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                </form>
+                <div class="modal-switch-text">
+                    Already have an account? <a href="#" onclick="switchModal('register-modal', 'login-modal')">Sign in</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- App JavaScript -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
